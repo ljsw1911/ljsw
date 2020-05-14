@@ -17,10 +17,19 @@ from django.contrib import admin
 from django.urls import path
 
 from user import views
+
 app_name = 'user'
 urlpatterns = [
     path('login/', views.user_login, name='user_login'),
     path('inspect/', views.user_inspect, name='user_inspect'),
     path('code/', views.get_code, name='get_code'),
     path('userinfo/', views.userinfo, name='userinfo'),
+    path('getmsg/', views.get_msg, name='modify'),
+    path('modify/', views.modify, name='modify'),
+
+    path('addres/', views.addres, name='addres'),
+    path('modadrsingle/', views.mod_addres_single, name='addres'),
+    path('modadr/', views.mod_addres, name='mod_addres'),
+    path('deladr/', views.del_addres, name='del_addres'),
+
 ]

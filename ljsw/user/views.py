@@ -10,7 +10,7 @@ import requests
 
 from ljsw import settings
 from user.sms import SMS
-from user.models import User
+from user.models import User, Addres
 
 
 # Create your views here.
@@ -22,7 +22,7 @@ def user_login(request):
     code = request.POST.get('verfy_code')
 
     key = cache.get('VCODE-{}'.format(phone))
-    if key and (key != int(code)):
+    if key != int(code):
         data = {
             "status": 400,
             "msg": "验证码错误"
@@ -44,12 +44,10 @@ def user_login(request):
                 "msg": "错误:" + str(e)
             }
             return JsonResponse(data=data)
-    print(2)
-    # user, _ = User.objects.get_or_create(user_phone=phone, defaults={'nikename' == 'u_' + str(phone)})
-    print(1)
     get_user = User.objects.get(user_phone=phone)
     token = secrets.token_hex()
-    cache.set(get_user.user_id, token, timeout=60 * 60 * 24 * 7)
+    cache.set(token, get_user.user_id, timeout=60 * 60 * 24 * 7)
+    print(token)
     data = {
         "status": 200,
         "msg": "登录成功",
@@ -116,4 +114,267 @@ def get_code(request):
 
 
 def userinfo(request):
-    return None
+    """
+    获取token值来得到用户id
+    :param request:
+    :return:
+    """
+    token = request.GET.get('token')
+
+    try:
+        uid = cache.get(token)
+    except Exception as e:
+        return JsonResponse({
+            'status': 201,
+            'msg': 'token失效，请重新登录',
+            'data': {}
+        })
+    try:
+        user = User.objects.get(pk=uid)
+    except Exception as e:
+        return JsonResponse({
+            'code': 400,
+            'msg': '该用户不存在',
+            'data': {}
+        })
+    obj = str(user.avatar)
+    if obj:
+        obj = 'http://www.yichr.cn/static/upload/' + obj
+
+    return JsonResponse({
+        'status': 200,
+        'msg': '信息获取成功',
+        'data': {
+            'uid': uid,
+            'nikename': user.nickname,
+            "phone": user.user_phone,
+            "avatar": obj,
+            "recycle": user.recycle_num,
+            "now_integral": user.now_integral,
+            "add_integral": user.add_integral,
+            "signature": user.signature
+        }
+    })
+
+
+def modify(request):
+    token = request.GET.get('token')
+    uid = cache.get(token)
+    """
+    通过 获取 token 得到 userid 匹配id修改信息 
+    """
+    nickname = request.POST.get('nickname')
+    avatar = request.FILES.get('avatar')
+    gender = request.POST.get('gender')
+    birthday = request.POST.get('birthday')
+    signature = request.POST.get('signature')
+    try:
+        user = User.objects.get(user_id=uid)
+    except:
+        return JsonResponse({
+            'status': 400,
+            'msg': 'tokens失效',
+            'data': {}
+        })
+    if gender == '男':
+        gender = 0
+    elif gender == '女':
+        gender = 1
+    else:
+        gender = 0
+    if birthday:
+        user.birthday = birthday
+    user.nickname = nickname
+    user.avatar = avatar
+    user.gender = gender
+    user.signature = signature
+    user.save()
+    return JsonResponse({
+        'status': 200,
+        'msg': '修改成功',
+    })
+
+
+def get_msg(request):
+    """
+    获取用户修改界面信息
+    :param request:
+    :return:
+    """
+    token = request.GET.get('token')
+    uid = cache.get(token)
+
+    try:
+        user = User.objects.get(user_id=uid)
+    except:
+        return JsonResponse({
+            'status': 400,
+            'msg': 'tokens失效',
+            'data': {}
+        })
+
+    avatar = user.avatar
+    img = str(avatar)
+    if avatar:
+        img = 'http://www.yichr.cn/static/upload/' + img
+
+    return JsonResponse({
+        'status': 200,
+        'msg': '获取成功',
+        'data': {
+            'nikename': user.nickname,
+            "avatar": img,
+            "gender": user.gender,
+            "birthday": user.birthday,
+            "signature": user.signature
+        }
+    })
+
+
+def addres(request):
+    """
+    获取地址
+    :param request:
+    :return:
+    """
+    token = request.GET.get('token')
+    uid = cache.get(token)
+
+    try:
+        u_addres = Addres.objects.filter(user_id=uid).all()
+        data = []
+        for add in u_addres:
+            data.append({
+                'addres_id': add.address_id,
+                'addres': add.estate + add.building + add.room,
+                'identity': add.identity
+            })
+        return JsonResponse({
+            'status': 200,
+            'msg': '获取成功',
+            'data': data
+        })
+    except:
+        return JsonResponse({
+            'status': 200,
+            'msg': '获取成功',
+            'data': ""
+        })
+
+
+def mod_addres(request):
+    """
+    修改地址
+    :param request:
+    :return:
+    """
+    token = request.GET.get('token')
+    add_id = request.GET.get('addres_id')
+    uid = cache.get(token)
+
+    estate = request.POST.get('estate')
+    building = request.POST.get('building')
+    room = request.POST.get('room')
+    identity = request.POST.get('identity')
+    if add_id:
+        try:
+            u_addres = Addres.objects.filter(user_id=uid).get(pk=add_id)
+            u_addres.estate = estate
+            u_addres.building = building
+            u_addres.room = room
+            u_addres.identity = identity
+            try:
+                u_addres.save()
+                return JsonResponse({
+                    'status': 200,
+                    'msg': '修改成功',
+                    'data': ""
+                })
+            except Exception as e:
+                print(e)
+        except Exception as e:
+            return JsonResponse({
+                'status': 400,
+                'msg': '无效地址',
+                'data': ""
+            })
+    try:
+        u_addres = Addres()
+        u_addres.user_id = uid
+        u_addres.estate = estate
+        u_addres.building = building
+        u_addres.room = room
+        u_addres.identity = identity
+        try:
+            u_addres.save()
+            return JsonResponse({
+                'status': 201,
+                'msg': '创建成功',
+                'data': ""
+            })
+        except Exception as e:
+            print(e)
+    except Exception as e:
+        print(e)
+    return JsonResponse({
+        'status': 400,
+        'msg': '无效地址',
+        'data': ""
+    })
+
+
+
+def del_addres(request):
+    """
+    删除地址
+    :param request:
+    :return:
+    """
+    token = request.GET.get('token')
+    add_id = request.GET.get('addres_id')
+    uid = cache.get(token)
+
+    u_addres = Addres.objects.filter(user_id=uid).filter(pk=add_id).first()
+    if u_addres:
+        u_addres.delete()
+        data = {
+                "status": 200,
+                "msg": "删除成功"
+            }
+        return JsonResponse(data=data)
+
+    data = {
+        "status": 400,
+        "msg": "失败"
+    }
+    return JsonResponse(data=data)
+
+
+def mod_addres_single(request):
+    """
+    修改地址信息显示
+    :param request:
+    :return:
+    """
+    token = request.GET.get('token')
+    add_id = request.GET.get('addres_id')
+    uid = cache.get(token)
+    try:
+        u_addres = Addres.objects.filter(user_id=uid).get(pk=add_id)
+        data = {
+            'estate': u_addres.estate,
+            'roommsg': u_addres.building + u_addres.room,
+            'identity': u_addres.identity
+        }
+        return JsonResponse({
+            'status': 200,
+            'msg': 'ok',
+            'data': data
+        })
+    except:
+        pass
+    return JsonResponse({
+        'status': 400,
+        'msg': '获取信息失败',
+        'data': ""
+    })

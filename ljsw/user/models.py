@@ -9,11 +9,12 @@ from django.db import models
 
 
 class Addres(models.Model):
-    address_id = models.AutoField(primary_key=True)
+    address_id = models.AutoField(primary_key=True, unique=True)
     user_id = models.IntegerField()
     estate = models.CharField(max_length=255, blank=True, null=True)
     building = models.CharField(max_length=255, blank=True, null=True)
     identity = models.IntegerField(blank=True, null=True)
+    room = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -35,15 +36,15 @@ class DetailedPoints(models.Model):
 class User(models.Model):
     user_id = models.AutoField(primary_key=True)
     user_phone = models.CharField(unique=True, max_length=32)
-    avatar = models.CharField(max_length=255, blank=True, null=True)
-    gender = models.IntegerField(blank=True, null=True)
+    avatar = models.ImageField(max_length=255, blank=True, null=True, upload_to='avatars')
+    gender = models.IntegerField(blank=True, null=True, default=0)
     nickname = models.CharField(unique=True, max_length=16)
     birthday = models.DateField(blank=True, null=True)
     signature = models.CharField(max_length=120, blank=True, null=True)
-    position = models.IntegerField(blank=True, null=True)
-    now_integral = models.IntegerField(blank=True, null=True)
-    add_integral = models.IntegerField(blank=True, null=True)
-    recycle_num = models.IntegerField(blank=True, null=True)
+    position = models.IntegerField(blank=True, null=True, default=0)
+    now_integral = models.IntegerField(blank=True, null=True, default=0)
+    add_integral = models.IntegerField(blank=True, null=True, default=0)
+    recycle_num = models.IntegerField(blank=True, null=True, default=0)
     qq = models.CharField(max_length=32, blank=True, null=True)
     vx = models.CharField(max_length=64, blank=True, null=True)
     zfb = models.CharField(max_length=64, blank=True, null=True)
