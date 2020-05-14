@@ -18,5 +18,5 @@ from django.urls import path, include
 
 urlpatterns = [
     path('ljsw/user/', include('user.urls')),
-
+    # path('ljsw/addres', include('address.urls')),
 ]
