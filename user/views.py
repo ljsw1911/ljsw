@@ -10,7 +10,8 @@ import requests
 
 from ljsw import settings
 from user.sms import SMS
-from user.models import User, Addres
+from user.models import User, Addres, DetailedPoints
+from common import errors
 
 
 # Create your views here.
@@ -240,8 +241,8 @@ def addres(request):
     token = request.GET.get('token')
     uid = cache.get(token)
 
-    try:
-        u_addres = Addres.objects.filter(user_id=uid).all()
+    u_addres = Addres.objects.filter(user_id=uid).all()
+    if u_addres:
         data = []
         for add in u_addres:
             data.append({
@@ -254,9 +255,9 @@ def addres(request):
             'msg': '获取成功',
             'data': data
         })
-    except:
+    else:
         return JsonResponse({
-            'status': 200,
+            'status': 500,
             'msg': '获取成功',
             'data': ""
         })
@@ -298,12 +299,12 @@ def mod_addres(request):
                 'msg': '无效地址',
                 'data': ""
             })
-    try:
+    if estate or building or room:
         u_addres = Addres()
         u_addres.user_id = uid
-        u_addres.estate = estate
-        u_addres.building = building
-        u_addres.room = room
+        u_addres.estate = estate if estate else ' '
+        u_addres.building = building if building else ' '
+        u_addres.room = room if room else ' '
         u_addres.identity = identity
         try:
             u_addres.save()
@@ -314,14 +315,11 @@ def mod_addres(request):
             })
         except Exception as e:
             print(e)
-    except Exception as e:
-        print(e)
     return JsonResponse({
         'status': 400,
         'msg': '无效地址',
         'data': ""
     })
-
 
 
 def del_addres(request):
@@ -338,9 +336,9 @@ def del_addres(request):
     if u_addres:
         u_addres.delete()
         data = {
-                "status": 200,
-                "msg": "删除成功"
-            }
+            "status": 200,
+            "msg": "删除成功"
+        }
         return JsonResponse(data=data)
 
     data = {
@@ -378,3 +376,92 @@ def mod_addres_single(request):
         'msg': '获取信息失败',
         'data': ""
     })
+
+
+def points(request):
+    """
+    获取积分明细
+    :param request:
+    :return:
+    """
+    token = request.GET.get('token')
+    points = request.GET.get('points')
+    point_msg = request.GET.get('pointmsg')
+    uid = cache.get(token)
+
+    if uid:
+        user = User.objects.filter(pk=uid).first()
+        if user:
+            user.now_integral += int(points)
+            user.add_integral += int(points)
+            point_create = DetailedPoints()
+            point_create.user_id = uid
+            point_create.points_num = points
+            point_create.point_type = point_msg
+            point_create.save()
+            user.save()
+            return JsonResponse({
+                'status': 200,
+                'msg': '存储成功',
+            })
+    return JsonResponse(errors.error400)
+
+
+def points_form(request):
+    """
+    返回积分明细
+    :param request:
+    :return:
+    """
+    token = request.GET.get('token')
+    uid = cache.get(token)
+    point_msg = DetailedPoints.objects.filter(user_id=uid).all()
+    if point_msg:
+        data = []
+        for msg in point_msg:
+            msg_time = msg.points_time
+            msg_time = str(msg_time).split('T')[0]
+            data.append({
+                'points_msg': msg.point_type,
+                'points': msg.points_num,
+                'point_time': msg_time
+            })
+        return JsonResponse({
+            'status': 200,
+            'msg': 'ok',
+            'data': data
+        })
+
+    return JsonResponse(errors.error400)
+
+
+def exchange(request):
+    """
+    兑换积分
+    :param request:
+    :return:
+    """
+    token = request.GET.get('token')
+    uid = cache.get(token)
+    points = request.GET.get('exchange')
+    print(points)
+    print(type(points))
+    if points and int(points) != 0:
+        user = User.objects.filter(pk=uid).first()
+        if user:
+            point = user.now_integral if int(points) > user.now_integral else int(points)
+            user.now_integral -= point
+            user.save()
+            point_create = DetailedPoints()
+            point_create.user_id = uid
+            point_create.points_num = point
+            point_create.point_type = '兑换{}积分'.format(point)
+            user.save()
+            point_create.save()
+
+            return JsonResponse({
+                'status': 200,
+                'msg': '兑换成功',
+            })
+
+    return JsonResponse(errors.error400)
