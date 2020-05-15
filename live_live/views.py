@@ -98,13 +98,15 @@ def article_editor(request):
         article = ArticlePub()
         article_title = request.POST.get('article_title')
         article_main = request.POST.get('article_main')
+        # category_id = request.POST.get('category_id')
+        category_id = 2
         # author_id = cache.get('token')
-        author_id = 4
+        author_id = 8
 
         article.article_title = article_title
         article.article_main = article_main
         article.article_datatime = datetime.datetime.now()
-        article.article_video = 0
+        article.category_id = category_id
         article.author_id = author_id
         article.save()
 
@@ -112,7 +114,7 @@ def article_editor(request):
             'article_title': article_title,
             'article_main': article_main,
             'article_datatime': datetime.datetime.now(),
-            'rticle_video': 0,
+            'category_id': category_id,
             'author_id ': author_id,
         }
         return JsonResponse({
