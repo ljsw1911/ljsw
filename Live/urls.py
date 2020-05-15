@@ -33,6 +33,8 @@ urlpatterns = [
     path('comments/', views.coments, name='comments'),
     # 文章发布
     path('article_editor/', views.article_editor, name='article_editor'),
+    # 商城商品展示
+    path('market/index/',views.market_index,name='market_index'),
 
 ]
 

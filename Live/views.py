@@ -10,7 +10,7 @@ from django.db.models import Count
 import datetime
 
 # 从数据库倒入数据表
-from Live.models import ArticlePub, Collection, Praise, Focus, Comments
+from Live.models import ArticlePub, Collection, Praise, Focus, Comments,Goods
 
 
 # 生活首页关注页面
@@ -20,6 +20,8 @@ def index_follow(request):
 
 # 生活页面-推荐页面
 def index_recommend(request):
+    # a = request.GET.get('cagetory_id')
+    # cageraty = Cageroty.object.filter(pk = int(a))
     data = []
     article_dict = {}
     article = ArticlePub.objects.all()
@@ -183,3 +185,25 @@ def login(request):
         })
 
 '''
+
+# 商品的
+def market_index(request):
+    goods_list = []
+    goods_dict = {}
+    goods = Goods.objects.all()
+    for msg in goods:
+        goods_dict['goods_id'] = msg.goods_id
+        goods_dict['goods_name'] = msg.goods_name
+        goods_dict['goods_img'] = msg.goods_img
+        goods_dict['goods_introduce'] = msg.goods_introduce
+        goods_dict['goods_price'] = msg.goods_price
+        goods_dict['goods_sales'] = msg.goods_sales
+
+        goods_list.append(goods_dict)
+        goods_dict = {}
+
+    return JsonResponse({
+        'code':200,
+        'msg':'商品信息展示',
+        'goods_list':goods_list
+    })

@@ -53,6 +53,31 @@ class Focus(models.Model):
         db_table = 'focus'
 
 
+class Goods(models.Model):
+    goods_id = models.AutoField(primary_key=True)
+    goods_name = models.CharField(max_length=255, blank=True, null=True)
+    goods_img = models.CharField(max_length=255, blank=True, null=True)
+    goods_introduce = models.CharField(max_length=255, blank=True, null=True)
+    goods_freight = models.CharField(max_length=255, blank=True, null=True)
+    goods_price = models.FloatField(blank=True, null=True)
+    goods_num = models.IntegerField(blank=True, null=True)
+    goods_sales = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'goods'
+
+
+class MyCacheTable(models.Model):
+    cache_key = models.CharField(primary_key=True, max_length=255)
+    value = models.TextField()
+    expires = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'my_cache_table'
+
+
 class Praise(models.Model):
     praise_id = models.AutoField(primary_key=True)
     article_id = models.IntegerField(blank=True, null=True)
