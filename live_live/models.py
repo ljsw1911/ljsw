@@ -9,17 +9,25 @@ from django.db import models
 
 
 class ArticlePub(models.Model):
-    artilce_id = models.AutoField(primary_key=True)
+    article_id = models.AutoField(primary_key=True)
     article_title = models.CharField(max_length=255, blank=True, null=True)
     article_main = models.TextField(blank=True, null=True)
-    article_img = models.CharField(max_length=255, blank=True, null=True)
     article_datatime = models.DateTimeField(blank=True, null=True)
-    article_video = models.IntegerField(blank=True, null=True)
     author_id = models.IntegerField(blank=True, null=True)
+    category_id = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'article_pub'
+
+
+class Category(models.Model):
+    category_id = models.IntegerField(primary_key=True)
+    category_name = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'category'
 
 
 class Collection(models.Model):
@@ -76,6 +84,17 @@ class MyCacheTable(models.Model):
     class Meta:
         managed = False
         db_table = 'my_cache_table'
+
+
+class Picture(models.Model):
+    picture_id = models.AutoField(primary_key=True)
+    picture_path = models.CharField(max_length=255, blank=True, null=True)
+    picture_type = models.CharField(max_length=255, blank=True, null=True)
+    article_id = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'picture'
 
 
 class Praise(models.Model):
