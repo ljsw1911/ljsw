@@ -2,14 +2,9 @@ import secrets
 
 from django.core.cache import cache
 from django.http import HttpResponse, JsonResponse
-from django.utils import timezone
-
-from django.db.models import Count
-
-import datetime
 
 # 从数据库倒入数据表
-from live_market.models import ArticlePub, Collection, Praise, Focus, Comments,Goods
+from live_market.models import Goods
 
 
 # 生活-商品的首页
@@ -18,6 +13,7 @@ def index(request):
     goods_dict = {}
     goods = Goods.objects.all()
     for msg in goods:
+        goods_dict['goods_category'] = msg.goods_category
         goods_dict['goods_id'] = msg.goods_id
         goods_dict['goods_name'] = msg.goods_name
         goods_dict['goods_img'] = msg.goods_img
