@@ -20,4 +20,5 @@ urlpatterns = [
     path('ljsw/user/', include('user.urls')),
     path('ljsw/index/', include('index.urls')),
     path('ljsw/live/', include('Live.urls')),
+    path('ljsw/live/recycling', include('Recycling.urls')),
 ]
