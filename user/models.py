@@ -25,7 +25,7 @@ class DetailedPoints(models.Model):
     data_id = models.AutoField(primary_key=True)
     user_id = models.IntegerField()
     point_type = models.CharField(max_length=255, blank=True, null=True)
-    points_time = models.DateTimeField(blank=True, null=True)
+    points_time = models.DateTimeField(blank=True, null=True, auto_now_add=True)
     points_num = models.IntegerField(blank=True, null=True)
 
     class Meta:
