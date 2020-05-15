@@ -37,8 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user.apps.UserConfig',
     'index',
-    'Live',
     'Recycling'
+    'live_live',
+    'live_market',
 ]
 
 MIDDLEWARE = [

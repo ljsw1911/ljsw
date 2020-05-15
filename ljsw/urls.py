@@ -19,7 +19,7 @@ from django.urls import path, include
 urlpatterns = [
     path('ljsw/user/', include('user.urls')),
     path('ljsw/index/', include('index.urls')),
-    path('ljsw/live/', include('Live.urls')),
     path('ljsw/live/', include('Recycling.urls')),
-
+    path('ljsw/live/live_live/', include('live_live.urls')),
+    path('ljsw/live/live_market/',include('live_market.urls')),
 ]
