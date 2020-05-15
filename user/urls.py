@@ -29,11 +29,14 @@ urlpatterns = [
     path('modify/', views.modify, name='modify'),
     #地址
     path('addres/', views.addres, name='addres'),
-    path('modadrsingle/', views.mod_addres_single, name='addres'),
+    path('modadrsingle/', views.mod_addres_single, name='modadrsingle'),
     path('modadr/', views.mod_addres, name='mod_addres'),
     path('deladr/', views.del_addres, name='del_addres'),
     #积分
-    path('points/', views.del_addres, name='del_addres'),
+    path('points/', views.points, name='points'),
+    path('pointform/', views.points_form, name='points_form'),
+    path('exchange/', views.exchange, name='exchange'),
+
 
 
 
