@@ -36,6 +36,11 @@ urlpatterns = [
     path('points/', views.points, name='points'),
     path('pointform/', views.points_form, name='points_form'),
     path('exchange/', views.exchange, name='exchange'),
+    #上门回收订单显示
+    path('recycle_order/', views.recycle_order, name='recycle_order'),
+    path('recycle_choice/', views.recycle_order_choice, name='recycle_order_choice'),
+    path('rec_com_cle/', views.rec_com_cle, name='rec_com_cle'),
+
 
 
 
