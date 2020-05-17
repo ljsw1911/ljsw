@@ -132,3 +132,4 @@ CACHES = {
         'LOCATION': 'ljsw_cache_table',
     }
 }
+APPEND_SLASH=False
