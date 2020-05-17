@@ -15,6 +15,7 @@ class ArticlePub(models.Model):
     article_datatime = models.DateTimeField(blank=True, null=True)
     author_id = models.IntegerField(blank=True, null=True)
     category_id = models.IntegerField(blank=True, null=True)
+    article_pic = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -44,7 +45,7 @@ class Comments(models.Model):
     comm_id = models.AutoField(primary_key=True)
     comment = models.CharField(max_length=255, blank=True, null=True)
     article_id = models.IntegerField(blank=True, null=True)
-    user_id = models.IntegerField(blank=True, null=True)
+    comment_user_id = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -64,12 +65,14 @@ class Focus(models.Model):
 class Goods(models.Model):
     goods_id = models.AutoField(primary_key=True)
     goods_name = models.CharField(max_length=255, blank=True, null=True)
-    goods_img = models.CharField(max_length=255, blank=True, null=True)
+    goods_pic = models.CharField(max_length=255, blank=True, null=True)
     goods_introduce = models.CharField(max_length=255, blank=True, null=True)
     goods_freight = models.CharField(max_length=255, blank=True, null=True)
     goods_price = models.FloatField(blank=True, null=True)
     goods_num = models.IntegerField(blank=True, null=True)
     goods_sales = models.IntegerField(blank=True, null=True)
+    goods_category = models.CharField(max_length=255, blank=True, null=True)
+    goods_para = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -84,17 +87,6 @@ class MyCacheTable(models.Model):
     class Meta:
         managed = False
         db_table = 'my_cache_table'
-
-
-class Picture(models.Model):
-    picture_id = models.AutoField(primary_key=True)
-    picture_path = models.CharField(max_length=255, blank=True, null=True)
-    picture_type = models.CharField(max_length=255, blank=True, null=True)
-    article_id = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'picture'
 
 
 class Praise(models.Model):
