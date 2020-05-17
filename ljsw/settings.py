@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'Recycling',
     'live_live',
     'ordermsg',
+    'live_market_seach',
 ]
 
 MIDDLEWARE = [
