@@ -10,7 +10,7 @@ import requests
 
 from ljsw import settings
 from user.sms import SMS
-from user.models import User, Addres, DetailedPoints
+from user.models import User, Addres, DetailedPoints, Recycling
 from common import errors
 
 
@@ -464,4 +464,107 @@ def exchange(request):
                 'msg': '兑换成功',
             })
 
+    return JsonResponse(errors.error400)
+
+
+def recycle_order(request):
+    """
+    获取上门订单信息
+    :param request:
+    :return:
+    """
+    token = request.GET.get('token')
+    uid = cache.get(token)
+
+    recycles = Recycling.objects.filter(user_id=uid).all()
+    user = User.objects.filter(user_id=uid).first()
+
+    if recycles and user:
+        data = []
+        for recycle in recycles:
+            addres = Addres.objects.get(address_id=recycle.addres_id)
+            recycling_time = str(recycle.recycling_time).split('T')[0]
+            current_time = str(recycle.current_time).split('T')[0]
+            data.append({
+                'recyling_id': '8801-9587-' + str(recycle.recycling_id),
+                'recycling_time': recycling_time,
+                'current_time': current_time,
+                'addres': addres.estate + addres.building + addres.room,
+                'recycle_state': recycle.recycle_state,
+                'phone': user.user_phone
+
+            })
+        return JsonResponse({
+            "status": 200,
+            "msg": "ok",
+            "data": data
+        })
+    return JsonResponse(errors.error400)
+
+
+def recycle_order_choice(request):
+    """
+    点击分别展示 预约中 已预约 完成页面
+    :param request:
+    :return:
+    """
+    token = request.GET.get('token')
+    uid = cache.get(token)
+    state = request.GET.get('recycle_state')
+
+    recycles = Recycling.objects.filter(user_id=uid).filter(recycle_state=state).all()
+    user = User.objects.filter(user_id=uid).first()
+
+    if recycles and user:
+        data = []
+        for recycle in recycles:
+            addres = Addres.objects.get(address_id=recycle.addres_id)
+            recycling_time = str(recycle.recycling_time).split('T')[0]
+            current_time = str(recycle.current_time).split('T')[0]
+            data.append({
+                'recyling_id': '8801-9587-' + str(recycle.recycling_id),
+                'recycling_time': recycling_time,
+                'current_time': current_time,
+                'addres': addres.estate + addres.building + addres.room,
+                'recycle_state': recycle.recycle_state,
+                'phone': user.user_phone
+            })
+        return JsonResponse({
+            "status": 200,
+            "msg": "ok",
+            "data": data
+        })
+    return JsonResponse(errors.error400)
+
+
+def rec_com_cle(request):
+    """
+    通过获取所在页面的订单号 给定不同完成字段
+    :param request:
+    :return:
+    """
+    token = request.GET.get('token')
+    uid = cache.get(token)
+    state = request.GET.get('rec_state')
+    recyling_id = request.GET.get('recyling_id')
+    rec_id = recyling_id.split('8801-9587-')[1]
+
+    recycle = Recycling.objects.filter(user_id=uid).filter(pk=rec_id).first()
+    if recycle:
+        if int(state) == 1:
+            recycle.recycle_state = 2
+            recycle.save()
+            return JsonResponse({
+                "status": 200,
+                "msg": "完成服务",
+                'rec_state':state
+            })
+        else:
+            recycle.recycle_state = 2
+            recycle.save()
+            return JsonResponse({
+                "status": 201,
+                "msg": "取消成功",
+                'rec_state': state
+            })
     return JsonResponse(errors.error400)

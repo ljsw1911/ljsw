@@ -52,3 +52,17 @@ class User(models.Model):
     class Meta:
         managed = False
         db_table = 'user'
+
+
+class Recycling(models.Model):
+    recycling_id = models.AutoField(primary_key=True)
+    user_id = models.IntegerField(blank=True)
+    recycling_time = models.DateTimeField(blank=True, null=True)
+    current_time = models.DateTimeField(blank=True, null=True)
+    recycle_msg = models.CharField(max_length=255, blank=True, null=True)
+    recycle_state = models.IntegerField(max_length=11, default=0, blank=True, null=True)
+    addres_id = models.IntegerField(max_length=11, default=0, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'recycling'
