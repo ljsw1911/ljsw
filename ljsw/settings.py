@@ -37,6 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user.apps.UserConfig',
     'index',
+    'live_market',
+    'Recycling',
+    'live_live',
+    'ordermsg',
 
 ]
 
@@ -130,4 +134,4 @@ CACHES = {
         'LOCATION': 'ljsw_cache_table',
     }
 }
-APPEND_SLASH=False
+APPEND_SLASH = False
