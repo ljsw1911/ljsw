@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user.apps.UserConfig',
     'index',
-    'Recycling'
+    'Recycling'，
     'live_live',
     'live_market',
 ]
