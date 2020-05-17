@@ -5,13 +5,12 @@ import secrets
 
 from django.core.cache import cache
 from django.http import JsonResponse
-from django.shortcuts import render
-import requests
 
 from ljsw import settings
 from user.sms import SMS
 from user.models import User, Addres, DetailedPoints, Recycling
 from common import errors
+from user.upload_img import upload
 
 
 # Create your views here.
@@ -138,9 +137,10 @@ def userinfo(request):
             'msg': '该用户不存在',
             'data': {}
         })
-    obj = str(user.avatar)
-    if obj:
-        obj = 'http://www.yichr.cn/static/upload/' + obj
+    avatar = str(user.avatar).split('avatars/')[1]
+    img = str(avatar)
+    if avatar:
+        img = 'http://qafhdvs6m.bkt.clouddn.com/' + img
 
     return JsonResponse({
         'status': 200,
@@ -149,7 +149,7 @@ def userinfo(request):
             'uid': uid,
             'nikename': user.nickname,
             "phone": user.user_phone,
-            "avatar": obj,
+            "avatar": img,
             "recycle": user.recycle_num,
             "now_integral": user.now_integral,
             "add_integral": user.add_integral,
@@ -169,6 +169,7 @@ def modify(request):
     gender = request.POST.get('gender')
     birthday = request.POST.get('birthday')
     signature = request.POST.get('signature')
+
     try:
         user = User.objects.get(user_id=uid)
     except:
@@ -185,11 +186,15 @@ def modify(request):
         gender = 0
     if birthday:
         user.birthday = birthday
-    user.nickname = nickname
+    # if avatar:
     user.avatar = avatar
+    user.nickname = nickname
     user.gender = gender
     user.signature = signature
     user.save()
+    avatar_img = user.avatar
+    avatar_name = str(avatar_img).split('avatars/')[1]
+    upload(avatar,avatar_name)
     return JsonResponse({
         'status': 200,
         'msg': '修改成功',
@@ -214,10 +219,10 @@ def get_msg(request):
             'data': {}
         })
 
-    avatar = user.avatar
+    avatar = str(user.avatar).split('avatars/')[1]
     img = str(avatar)
     if avatar:
-        img = 'http://www.yichr.cn/static/upload/' + img
+        img = 'http://qafhdvs6m.bkt.clouddn.com/' + img
 
     return JsonResponse({
         'status': 200,
@@ -444,8 +449,6 @@ def exchange(request):
     token = request.GET.get('token')
     uid = cache.get(token)
     points = request.GET.get('exchange')
-    print(points)
-    print(type(points))
     if points and int(points) != 0:
         user = User.objects.filter(pk=uid).first()
         if user:
@@ -475,11 +478,17 @@ def recycle_order(request):
     """
     token = request.GET.get('token')
     uid = cache.get(token)
+    state = request.GET.get('rec_state')
 
-    recycles = Recycling.objects.filter(user_id=uid).all()
-    user = User.objects.filter(user_id=uid).first()
+    # user = User.objects.filter(user_id=uid).first()
 
-    if recycles and user:
+    if state == 3:
+        recycles = Recycling.objects.filter(user_id=uid).all()
+    else:
+        recycles = Recycling.objects.filter(user_id=uid).filter(recycle_state=state).all()
+
+    if recycles:
+        user = User.objects.filter(user_id=uid).first()
         data = []
         for recycle in recycles:
             addres = Addres.objects.get(address_id=recycle.addres_id)
@@ -510,7 +519,7 @@ def recycle_order_choice(request):
     """
     token = request.GET.get('token')
     uid = cache.get(token)
-    state = request.GET.get('recycle_state')
+    state = request.GET.get('rec_state')
 
     recycles = Recycling.objects.filter(user_id=uid).filter(recycle_state=state).all()
     user = User.objects.filter(user_id=uid).first()
@@ -557,7 +566,7 @@ def rec_com_cle(request):
             return JsonResponse({
                 "status": 200,
                 "msg": "完成服务",
-                'rec_state':state
+                'rec_state': state
             })
         else:
             recycle.recycle_state = 2

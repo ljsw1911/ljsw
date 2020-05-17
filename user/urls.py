@@ -20,29 +20,27 @@ from user import views
 
 app_name = 'user'
 urlpatterns = [
-    #用户信息
+    # 用户信息
     path('login/', views.user_login, name='user_login'),
     path('inspect/', views.user_inspect, name='user_inspect'),
     path('code/', views.get_code, name='get_code'),
     path('userinfo/', views.userinfo, name='userinfo'),
     path('getmsg/', views.get_msg, name='modify'),
     path('modify/', views.modify, name='modify'),
-    #地址
+    # 地址
     path('addres/', views.addres, name='addres'),
-    path('modadrsingle/', views.mod_addres_single, name='modadrsingle'),
+    path('modadr/single/', views.mod_addres_single, name='modadrsingle'),
     path('modadr/', views.mod_addres, name='mod_addres'),
     path('deladr/', views.del_addres, name='del_addres'),
-    #积分
+    # 积分
     path('points/', views.points, name='points'),
     path('pointform/', views.points_form, name='points_form'),
     path('exchange/', views.exchange, name='exchange'),
-    #上门回收订单显示
-    path('recycle_order/', views.recycle_order, name='recycle_order'),
-    path('recycle_choice/', views.recycle_order_choice, name='recycle_order_choice'),
-    path('rec_com_cle/', views.rec_com_cle, name='rec_com_cle'),
-
-
-
+    # 上门回收订单显示
+    path('recycle/order/', views.recycle_order, name='recycle_order'),
+    path('recycle/choice/', views.recycle_order_choice, name='recycle_order_choice'),
+    path('rec/com_cle/', views.rec_com_cle, name='rec_com_cle'),
+    # 商城订单显示
 
 
 ]

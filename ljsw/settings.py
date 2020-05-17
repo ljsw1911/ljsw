@@ -37,8 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user.apps.UserConfig',
     'index',
-    'Live',
-    'Recycling'
+    'live_market',
+    'Recycling',
+    'live_live',
+    'ordermsg'
 ]
 
 MIDDLEWARE = [
@@ -131,3 +133,4 @@ CACHES = {
         'LOCATION': 'ljsw_cache_table',
     }
 }
+APPEND_SLASH = False

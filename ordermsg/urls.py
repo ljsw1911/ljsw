@@ -16,12 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-urlpatterns = [
-    path('ljsw/user/', include('user.urls')),
-    path('ljsw/index/', include('index.urls')),
-    path('ljsw/live/', include('Recycling.urls')),
-    path('ljsw/live/live_market/',include('live_market.urls')),
-    path('ljsw/live/live_live/', include('live_live.urls')),
-    path('ljsw/live/', include('ordermsg.urls')),
+from ordermsg import views
 
-]
+app_name = 'ordermsg'
+urlpatterns = {
+    path('order/msg/', views.ordermsg, name='ordermsg'),
+    path('order/info/', views.orderinfo, name='orderinfo'),
+    path('order/complete/', views.complete, name='complete'),
+    path('order/delete/', views.delete, name='delete'),
+
+
+}
