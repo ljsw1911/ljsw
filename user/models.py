@@ -60,8 +60,8 @@ class Recycling(models.Model):
     recycling_time = models.DateTimeField(blank=True, null=True)
     current_time = models.DateTimeField(blank=True, null=True)
     recycle_msg = models.CharField(max_length=255, blank=True, null=True)
-    recycle_state = models.IntegerField(max_length=11, default=0, blank=True, null=True)
-    addres_id = models.IntegerField(max_length=11, default=0, blank=True, null=True)
+    recycle_state = models.IntegerField(default=0, blank=True, null=True)
+    addres_id = models.IntegerField(default=0, blank=True, null=True)
 
     class Meta:
         managed = False
