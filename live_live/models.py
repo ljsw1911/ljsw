@@ -9,17 +9,26 @@ from django.db import models
 
 
 class ArticlePub(models.Model):
-    artilce_id = models.AutoField(primary_key=True)
+    article_id = models.AutoField(primary_key=True)
     article_title = models.CharField(max_length=255, blank=True, null=True)
     article_main = models.TextField(blank=True, null=True)
-    article_img = models.CharField(max_length=255, blank=True, null=True)
     article_datatime = models.DateTimeField(blank=True, null=True)
-    article_video = models.IntegerField(blank=True, null=True)
     author_id = models.IntegerField(blank=True, null=True)
+    category_id = models.IntegerField(blank=True, null=True)
+    article_pic = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'article_pub'
+
+
+class Category(models.Model):
+    category_id = models.IntegerField(primary_key=True)
+    category_name = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'category'
 
 
 class Collection(models.Model):
@@ -36,7 +45,7 @@ class Comments(models.Model):
     comm_id = models.AutoField(primary_key=True)
     comment = models.CharField(max_length=255, blank=True, null=True)
     article_id = models.IntegerField(blank=True, null=True)
-    user_id = models.IntegerField(blank=True, null=True)
+    comment_user_id = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -51,6 +60,33 @@ class Focus(models.Model):
     class Meta:
         managed = False
         db_table = 'focus'
+
+
+class Goods(models.Model):
+    goods_id = models.AutoField(primary_key=True)
+    goods_name = models.CharField(max_length=255, blank=True, null=True)
+    goods_pic = models.CharField(max_length=255, blank=True, null=True)
+    goods_introduce = models.CharField(max_length=255, blank=True, null=True)
+    goods_freight = models.CharField(max_length=255, blank=True, null=True)
+    goods_price = models.FloatField(blank=True, null=True)
+    goods_num = models.IntegerField(blank=True, null=True)
+    goods_sales = models.IntegerField(blank=True, null=True)
+    goods_category = models.CharField(max_length=255, blank=True, null=True)
+    goods_para = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'goods'
+
+
+class MyCacheTable(models.Model):
+    cache_key = models.CharField(primary_key=True, max_length=255)
+    value = models.TextField()
+    expires = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'my_cache_table'
 
 
 class Praise(models.Model):

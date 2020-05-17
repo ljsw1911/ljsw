@@ -1,17 +1,18 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 
-from live_market.models import Activity,Discount,Goods
+from live_market_seach.models import Activity,Discount, Goods
+
 
 # Create your views here.
 def get_goods(request):
     # 获取商品名称  模糊查询
     goods = request.POST.get('goods')
-    goods_data = Goods.objects.filter(goods_name__contains = goods)
+    goods_data = Goods.objects.filter(goods_name__contains=goods)
     lens = len(goods_data)
 
     # 获取循环获取商品具体信息
-    good_info=[]
+    good_info = []
     for i in range(lens):
         goods_info_ = {}
         discount = []
@@ -41,13 +42,12 @@ def get_goods(request):
         data = {
             "status": 200,
             "msg": "查询成功",
-            "data":good_info,
+            "data": good_info,
         }
     else:
         data = {
             "status": 400,
             "msg": "未匹配到相关数据",
         }
-
 
     return JsonResponse(data)

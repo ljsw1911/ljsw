@@ -23,6 +23,6 @@ urlpatterns = [
     path('ljsw/live/live_market/',include('live_market.urls')),
     path('ljsw/live/live_live/', include('live_live.urls')),
     path('ljsw/live/', include('ordermsg.urls')),
-    path('ljsw/live/', include('live_market_seach')),
+    path('ljsw/live/', include('live_market_seach.urls')),
 
 ]
