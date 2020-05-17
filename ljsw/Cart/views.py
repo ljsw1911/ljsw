@@ -1,16 +1,15 @@
+from django.core.cache import cache
 
 from django.http import JsonResponse
 
-
-# 获取上门回收的信息
 from Cart.models import Cart
 
 
+# 获取购物车的信息
 def cart(request):
+    token = request.GET.get('token')
+    user_id = cache.get(token)
     if request.method == 'POST':
-        print('***********')
-        token = request.GET
-        user_id = request.POST.get('user_id')
         goods_id = request.POST.get('goods_id')
         cart_new = Cart(user_id=user_id, goods_id=goods_id)
         cart_new.save()
