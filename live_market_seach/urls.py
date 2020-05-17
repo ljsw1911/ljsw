@@ -14,15 +14,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
+
+from live_market import views
+app_name = 'live_market'
+
 
 urlpatterns = [
-    path('ljsw/user/', include('user.urls')),
-    path('ljsw/index/', include('index.urls')),
-    path('ljsw/live/', include('Recycling.urls')),
-    path('ljsw/live/live_market/',include('live_market.urls')),
-    path('ljsw/live/live_live/', include('live_live.urls')),
-    path('ljsw/live/', include('ordermsg.urls')),
-    path('ljsw/live/', include('live_market_seach')),
+    path('market/search/', views.get_goods, name='search_goods'),
 
 ]
