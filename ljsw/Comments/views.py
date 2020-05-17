@@ -8,6 +8,7 @@ from Comments.models import Comments
 from Comments.models import User
 
 
+# 展示消息界面的信息
 def comment(request):
     if request.method == 'POST':
         comments = Comments.objects.all()
