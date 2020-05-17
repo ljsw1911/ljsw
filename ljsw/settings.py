@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'live_market',
     'Recycling',
     'live_live',
-    'ordermsg',
+
 
 ]
 
