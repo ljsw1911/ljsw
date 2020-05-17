@@ -1,18 +1,20 @@
+from django.core.cache import cache
 
 from django.http import JsonResponse
 
 from django.utils import timezone
 
-# 获取订单的信息
 from Order.models import Order
 
 from Order.models import Goods
 
 
+# 获取订单信息
 def order(request):
+    token = request.GET.get('token')
+    user_id = cache.get(token)
     if request.method == 'POST':
         goods_id = request.POST.get('goods_id')
-        user_id = request.POST.get('user_id')
         or_name = request.POST.get('or_name')
         or_phone = request.POST.get('or_phone')
         or_address = request.POST.get('or_address')
@@ -57,3 +59,5 @@ def order(request):
                 'msg': '订单添加失败'
             }
         )
+
+
