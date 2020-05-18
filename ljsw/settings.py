@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'Recycling',
     'live_live',
     'ordermsg',
-    'live_market_seach',
+    'live_market_search',
     'Order',
     'Comments',
     'Cart'
