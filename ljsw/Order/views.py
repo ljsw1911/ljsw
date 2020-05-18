@@ -12,7 +12,14 @@ from Order.models import Goods
 # 获取订单信息
 def order(request):
     token = request.GET.get('token')
-    user_id = cache.get(token)
+    try:
+        user_id = cache.get(token)
+    except Exception as e:
+        return JsonResponse({
+            'status': 201,
+            'msg': 'token失效，请重新登录',
+            'data': {}
+        })
     if request.method == 'POST':
         goods_id = request.POST.get('goods_id')
         or_name = request.POST.get('or_name')
