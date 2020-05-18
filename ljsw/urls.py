@@ -24,5 +24,8 @@ urlpatterns = [
     path('ljsw/live/live_live/', include('live_live.urls')),
     path('ljsw/live/', include('ordermsg.urls')),
     path('ljsw/live/', include('live_market_seach.urls')),
+    path('ljsw/live/cart/', include('Cart.urls')),
+    path('ljsw/live/order/', include('Order.urls')),
+    path('ljsw/live/comments/', include('Comments.urls')),
 
 ]

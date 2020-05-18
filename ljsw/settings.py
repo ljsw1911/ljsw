@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     'live_live',
     'ordermsg',
     'live_market_seach',
+    'Order',
+    'Comments',
+    'Cart'
 ]
 
 MIDDLEWARE = [
