@@ -10,7 +10,14 @@ from Recycling.models import Recycling
 # 获取上门回收的信息
 def recycling(request):
     token = request.GET.get('token')
-    user_id = cache.get(token)
+    try:
+        user_id = cache.get(token)
+    except Exception as e:
+        return JsonResponse({
+            'status': 201,
+            'msg': 'token失效，请重新登录',
+            'data': {}
+        })
     if request.method == 'POST':
         recycling_time = request.POST.get('recycling_time')
         print(recycling_time)
