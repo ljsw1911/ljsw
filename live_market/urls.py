@@ -21,5 +21,6 @@ from live_market import views
 urlpatterns = [
     # 生活首页关注页面
     path('index/', views.index, name='index'),
+    path('details/',views.details,name='details'),
 
 ]

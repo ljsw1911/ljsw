@@ -35,7 +35,7 @@ for msg in photo:
 '''
 
 
-def storage_img(file_data):
+def storage_img(file_data,img_suffix):
     url = 'http://qaewhn5po.bkt.clouddn.com/'
     access_key = 'tYEJjcDsjTDnrhcAsFDK68Fxg8Tho10lo8gy-G3s'
     secret_key = 'I3d1WffCP6cIAuHoiObjUkce18d1Pwo3FBwnYrbS'
@@ -44,7 +44,7 @@ def storage_img(file_data):
     bucket_name = 'ljsw-article'
     token = q.upload_token(bucket_name, None, 3600)
     ret, info = put_data(token, None, file_data)
-    url += str(ret.get('key'))
+    url = url + str(ret.get('key')) + '/' + img_suffix
     if info.status_code == 200:
         return url
     else:
