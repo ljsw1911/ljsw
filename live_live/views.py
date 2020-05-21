@@ -14,6 +14,7 @@ from live_live.upload_qiniuyun import storage_img
 # 从数据库倒入数据表
 from live_live.models import ArticlePub, Collection, Praise, Focus
 
+
 # 生活-生活首页
 def index(request):
     # token = request.GET.get('token')
@@ -22,15 +23,18 @@ def index(request):
     data = []
     article_dict = {}
 
-    category_id = 2
+
+    category_id = request.GET.get('category_id')
+    # category_id = 2
     articles = ArticlePub.objects.filter(category_id=category_id)
 
     for msg in articles:
-        article_img = {}
+        img = {}
         article_dict['article_title'] = msg.article_title
         article_dict['article_main'] = msg.article_main
-        picture_url = msg.article_pic.split(',')
-        article_dict['img'] = picture_url
+        img['type'] = msg.type
+        img['img_url'] = msg.article_pic.split(',')
+        article_dict['img'] = img
         before = timezone.now() - msg.article_datatime
         if before.days == 0:
             before_list = str(before).split(':')
@@ -42,7 +46,6 @@ def index(request):
             # 如果大于一天则显示文章发布的时间
             before = msg.article_datatime.strftime('%Y年%m月%d日')
         article_dict['data'] = before
-
 
         # 查询点赞人数，并且查看当前用户是否点赞了该文章
         praise_dict = Praise.objects.filter(article_id=msg.article_id).aggregate(num=Count('user_id'))
@@ -83,34 +86,41 @@ def index(request):
         data.append(article_dict)
         article_dict = {}
 
-
     return JsonResponse({
-        'code':200,
-        'msg':'文章数据',
-        'data':data,
+        'code': 200,
+        'msg': '文章数据',
+        'data': data,
     })
-
 
 
 # 生活-文章编辑
 def article_editor(request):
     if request.method == 'POST':
+        video = {'avi', 'wmv', 'mpg', 'mov', 'rm', 'swf', 'mp4'}
         article = ArticlePub()
         article_title = request.POST.get('article_title')
         article_main = request.POST.get('article_main')
         # 获取照片的地址
-        picture_url = []
+        picture_url_list = []
         img = request.FILES.getlist('article_pic')
         for msg in img:
-            msg_data = [msg.file, msg.name, msg.content_type, msg.size, msg.charset,
-                        msg.content_type_extra]
-            image = InMemoryUploadedFile(*msg_data)
-            result = storage_img(image.file.read())
-            picture_url.append(result)
-        picture_url = ','.join(picture_url)
+            img_suffix = str(msg).split('.')[-1]
+            result = storage_img(msg.read(),img_suffix)
+            picture_url_list.append(result)
+        picture_url = ','.join(picture_url_list)
         article.article_pic = picture_url
+        # print(len(picture_url_list))
+        if len(picture_url_list) == 1:
+            img_suffix = picture_url_list[0].split('/')[-1]
+            # print(img_suffix)
+            if img_suffix in video:
+                type = 'video'
+            else:
+                type = 'img'
+        else:
+            type = 'img'
 
-        category_id = 2
+        category_id = 3
         # request.GET.get('token')
         # author_id = cache.get('token')
         author_id = 8
@@ -120,6 +130,7 @@ def article_editor(request):
         article.article_datatime = datetime.datetime.now()
         article.category_id = category_id
         article.author_id = author_id
+        article.type = type
         article.save()
 
         data = {
@@ -128,7 +139,8 @@ def article_editor(request):
             'article_datatime': datetime.datetime.now(),
             'category_id': category_id,
             'author_id ': author_id,
-            'article_pic': picture_url
+            'article_pic': picture_url,
+            'type': type
         }
         return JsonResponse({
             'code': 200,
@@ -140,19 +152,3 @@ def article_editor(request):
             'code': 400,
             'msg': '文章添加失败'
         })
-
-'''
-def test(request):
-    picture_url = []
-    file = request.FILES.getlist('file')
-    for msg in file:
-        msg_data = [msg.file, msg.name, msg.content_type, msg.size, msg.charset,
-                    msg.content_type_extra]
-        image = InMemoryUploadedFile(*msg_data)
-        result = storage_img(image.file.read())
-        picture_url.append(result)
-    picture_url = ','.join(picture_url)
-    print(picture_url)
-
-    return HttpResponse('hhhhhhh')
-'''
