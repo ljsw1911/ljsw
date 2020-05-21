@@ -38,7 +38,7 @@ urlpatterns = [
     path('exchange/', views.exchange, name='exchange'),
     # 上门回收订单显示
     path('recycle/order/', views.recycle_order, name='recycle_order'),
-    path('recycle/choice/', views.recycle_order_choice, name='recycle_order_choice'),
+    # path('recycle/choice/', views.recycle_order_choice, name='recycle_order_choice'),
     path('rec/com_cle/', views.rec_com_cle, name='rec_com_cle'),
     # 商城订单显示
 

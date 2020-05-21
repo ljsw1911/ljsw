@@ -137,10 +137,13 @@ def userinfo(request):
             'msg': '该用户不存在',
             'data': {}
         })
-    avatar = str(user.avatar).split('avatars/')[1]
-    img = str(avatar)
+    avatar = user.avatar
     if avatar:
+        avatar = str(user.avatar).split('avatars/')[1]
+        img = str(avatar)
         img = 'http://qafhdvs6m.bkt.clouddn.com/' + img
+    else:
+        img = ''
 
     return JsonResponse({
         'status': 200,
@@ -169,7 +172,6 @@ def modify(request):
     gender = request.POST.get('gender')
     birthday = request.POST.get('birthday')
     signature = request.POST.get('signature')
-
     try:
         user = User.objects.get(user_id=uid)
     except:
@@ -186,15 +188,16 @@ def modify(request):
         gender = 0
     if birthday:
         user.birthday = birthday
-    # if avatar:
+
     user.avatar = avatar
     user.nickname = nickname
     user.gender = gender
     user.signature = signature
     user.save()
-    avatar_img = user.avatar
-    avatar_name = str(avatar_img).split('avatars/')[1]
-    upload(avatar,avatar_name)
+    if avatar:
+        avatar_img = user.avatar
+        avatar_name = str(avatar_img).split('avatars/')[1]
+        upload(avatar, avatar_name)
     return JsonResponse({
         'status': 200,
         'msg': '修改成功',
@@ -219,10 +222,13 @@ def get_msg(request):
             'data': {}
         })
 
-    avatar = str(user.avatar).split('avatars/')[1]
-    img = str(avatar)
+    avatar = user.avatar
     if avatar:
+        avatar = str(user.avatar).split('avatars/')[1]
+        img = str(avatar)
         img = 'http://qafhdvs6m.bkt.clouddn.com/' + img
+    else:
+        img = ''
 
     return JsonResponse({
         'status': 200,
@@ -262,7 +268,7 @@ def addres(request):
         })
     else:
         return JsonResponse({
-            'status': 500,
+            'status': 200,
             'msg': '获取成功',
             'data': ""
         })
@@ -437,7 +443,7 @@ def points_form(request):
             'data': data
         })
 
-    return JsonResponse(errors.error400)
+    return JsonResponse(errors.status201)
 
 
 def exchange(request):
@@ -508,42 +514,42 @@ def recycle_order(request):
             "msg": "ok",
             "data": data
         })
-    return JsonResponse(errors.error400)
+    return JsonResponse(errors.status201)
 
 
-def recycle_order_choice(request):
-    """
-    点击分别展示 预约中 已预约 完成页面
-    :param request:
-    :return:
-    """
-    token = request.GET.get('token')
-    uid = cache.get(token)
-    state = request.GET.get('rec_state')
-
-    recycles = Recycling.objects.filter(user_id=uid).filter(recycle_state=state).all()
-    user = User.objects.filter(user_id=uid).first()
-
-    if recycles and user:
-        data = []
-        for recycle in recycles:
-            addres = Addres.objects.get(address_id=recycle.addres_id)
-            recycling_time = str(recycle.recycling_time).split('T')[0]
-            current_time = str(recycle.current_time).split('T')[0]
-            data.append({
-                'recyling_id': '8801-9587-' + str(recycle.recycling_id),
-                'recycling_time': recycling_time,
-                'current_time': current_time,
-                'addres': addres.estate + addres.building + addres.room,
-                'recycle_state': recycle.recycle_state,
-                'phone': user.user_phone
-            })
-        return JsonResponse({
-            "status": 200,
-            "msg": "ok",
-            "data": data
-        })
-    return JsonResponse(errors.error400)
+# def recycle_order_choice(request):
+#     """
+#     点击分别展示 预约中 已预约 完成页面
+#     :param request:
+#     :return:
+#     """
+#     token = request.GET.get('token')
+#     uid = cache.get(token)
+#     state = request.GET.get('rec_state')
+#
+#     recycles = Recycling.objects.filter(user_id=uid).filter(recycle_state=state).all()
+#     user = User.objects.filter(user_id=uid).first()
+#
+#     if recycles and user:
+#         data = []
+#         for recycle in recycles:
+#             addres = Addres.objects.get(address_id=recycle.addres_id)
+#             recycling_time = str(recycle.recycling_time).split('T')[0]
+#             current_time = str(recycle.current_time).split('T')[0]
+#             data.append({
+#                 'recyling_id': '8801-9587-' + str(recycle.recycling_id),
+#                 'recycling_time': recycling_time,
+#                 'current_time': current_time,
+#                 'addres': addres.estate + addres.building + addres.room,
+#                 'recycle_state': recycle.recycle_state,
+#                 'phone': user.user_phone
+#             })
+#         return JsonResponse({
+#             "status": 200,
+#             "msg": "ok",
+#             "data": data
+#         })
+#     return JsonResponse(errors.error400)
 
 
 def rec_com_cle(request):

@@ -38,7 +38,7 @@ class User(models.Model):
     user_phone = models.CharField(unique=True, max_length=32)
     avatar = models.ImageField(max_length=255, blank=True, null=True, upload_to='avatars')
     gender = models.IntegerField(blank=True, null=True, default=0)
-    nickname = models.CharField(unique=True, max_length=16)
+    nickname = models.CharField(unique=True, max_length=16, null=True, blank=True)
     birthday = models.DateField(blank=True, null=True)
     signature = models.CharField(max_length=120, blank=True, null=True)
     position = models.IntegerField(blank=True, null=True, default=0)
