@@ -17,14 +17,10 @@ def index(request):
     for msg in goods:
         goods_dict['goods_id'] = msg.goods_id
         goods_dict['goods_name'] = msg.goods_name
-        goods_dict['goods_pic'] = msg.goods_pic.split(',')
-        goods_dict['goods_introduce'] = msg.goods_introduce
-        goods_dict['goods_fright'] = msg.goods_freight
+        goods_dict['goods_pic'] = msg.goods_pic.split(',')[0]
         goods_dict['goods_price'] = msg.goods_price
-        goods_dict['goods_num'] = msg.goods_num
         goods_dict['goods_sales'] = msg.goods_sales
         goods_dict['goods_category'] = msg.goods_category
-        goods_dict['goods_para'] = msg.goods_para.split(',')
 
         data.append(goods_dict)
         goods_dict = {}
@@ -32,5 +28,29 @@ def index(request):
     return JsonResponse({
         'code': 200,
         'msg': '商品信息展示',
-        'goods_list': data
+        'data': data
+    })
+
+
+def details(request):
+    data = {}
+    goods_para = {}
+    goods_id = request.GET.get('goods_id')
+    goods = Goods.objects.filter(goods_id=goods_id).first()
+    data['goods_name'] = goods.goods_name
+    data['goods_pic'] = goods.goods_pic.split(',')
+    data['goods_introduce'] = goods.goods_introduce
+    data['goods_fright'] = goods.goods_freight
+    data['goods_price'] = goods.goods_price
+    data['goods_sales'] = goods.goods_sales
+
+    goods_para['address'] = goods.address
+    goods_para['packaging'] = goods.packaging
+    goods_para['specifications'] = goods.specifications
+    data['goods_para'] = goods_para
+
+    return JsonResponse({
+        'code':200,
+        'msg':'商品详情',
+        'data':data,
     })
