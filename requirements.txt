@@ -14,4 +14,4 @@ qiniu==7.2.8
 query-string==2019.4.13
 requests==2.23.0
 sqlparse==0.3.1
-urllib3==1.25.9
+urllib3==1.26.5
